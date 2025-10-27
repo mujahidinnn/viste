@@ -12,8 +12,6 @@ export default function CVPreview({ data }) {
     email,
     phone,
     address,
-    postalcode,
-    city,
     summary,
     experiences = [],
     education = [],
@@ -21,8 +19,6 @@ export default function CVPreview({ data }) {
     avatarUrl,
     rounded = 50,
   } = data || {};
-
-  console.log("data", data);
 
   return (
     <div
@@ -58,20 +54,17 @@ export default function CVPreview({ data }) {
             {name || "Nama Lengkap Anda"}
           </h1>
           <h3 style={{ margin: "4px 0", fontWeight: 400, color: "#555" }}>
-            {position || "Posisi / Jabatan"}
+            {position}
           </h3>
         </div>
       </div>
 
       {/* ===== PERSONAL INFO ===== */}
-      <SectionTitle icon={<UserOutlined />} title="Pribadi" />
+      <SectionTitle icon={<UserOutlined />} title="Data Pribadi" />
       <div style={{ marginBottom: 16 }}>
         <InfoRow label="Email" value={email || "email@contoh.com"} />
         <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
-        <InfoRow
-          label="Alamat"
-          value={[address, city, postalcode].filter(Boolean).join(", ")}
-        />
+        <InfoRow label="Alamat" value={address | ""} />
       </div>
 
       {/* ===== SUMMARY ===== */}
@@ -218,7 +211,7 @@ const SectionTitle = ({ icon, title }) => (
 
 const InfoRow = ({ label, value }) => (
   <p style={{ margin: "4px 0" }}>
-    <strong style={{ display: "inline-block", width: 120 }}>{label}</strong>{" "}
+    <strong style={{ display: "inline-block", width: 120 }}>{label} </strong> :{" "}
     {value || "-"}
   </p>
 );

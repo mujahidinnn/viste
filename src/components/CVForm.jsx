@@ -18,6 +18,7 @@ import {
   Slider,
   Space,
 } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 
 const { RangePicker } = DatePicker;
@@ -149,8 +150,12 @@ export default function CVForm({ onChange }) {
         <Input placeholder="Masukkan email Anda" />
       </Form.Item>
 
-      <Form.Item label="Telepon" name="phone">
+      <Form.Item label="Nomor Telepon" name="phone">
         <Input placeholder="Masukkan nomor telepon" />
+      </Form.Item>
+
+      <Form.Item label="Alamat Lengkap" name="address">
+        <TextArea rows={4} placeholder="Masukkan alamat lengkap" />
       </Form.Item>
 
       {/* ====== DESKRIPSI DIRI ====== */}
