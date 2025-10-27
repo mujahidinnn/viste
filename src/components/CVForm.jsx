@@ -190,7 +190,7 @@ export default function CVForm({ onChange }) {
           open={show.summary}
           onCancel={() => toggleModal("summary", false)}
           footer={null}
-          title="💡 Tips Deskripsi Diri"
+          title="Tips Deskripsi Diri"
         >
           <ol>
             <li>Letakkan profil Anda di bagian paling atas CV.</li>
@@ -211,7 +211,7 @@ export default function CVForm({ onChange }) {
           <SectionCollapse
             title="Pengalaman Kerja"
             tipsKey="experient"
-            tipsTitle="💡 Tips Pengalaman Kerja"
+            tipsTitle="Tips Pengalaman Kerja"
             tipsContent={
               <ol>
                 <li>
@@ -241,7 +241,7 @@ export default function CVForm({ onChange }) {
           <SectionCollapse
             title="Pendidikan"
             tipsKey="education"
-            tipsTitle="💡 Tips Pendidikan"
+            tipsTitle="Tips Pendidikan"
             tipsContent={
               <ol>
                 <li>Hanya tulis pendidikan yang relevan.</li>
@@ -270,7 +270,7 @@ export default function CVForm({ onChange }) {
           <SectionCollapse
             title="Keterampilan / Keahlian"
             tipsKey="skill"
-            tipsTitle="💡 Tips Keahlian"
+            tipsTitle="Tips Keahlian"
             tipsContent={
               <ol>
                 <li>

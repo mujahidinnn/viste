@@ -66,12 +66,12 @@ export default function CVPreview({ data }) {
       {/* ===== PERSONAL INFO ===== */}
       <SectionTitle icon={<UserOutlined />} title="Pribadi" />
       <div style={{ marginBottom: 16 }}>
+        <InfoRow label="Email" value={email || "email@contoh.com"} />
+        <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
         <InfoRow
           label="Alamat"
-          value={`${address || ""} ${city || ""} ${postalcode || ""}`}
+          value={[address, city, postalcode].filter(Boolean).join(", ")}
         />
-        <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
-        <InfoRow label="Email" value={email || "email@contoh.com"} />
       </div>
 
       {/* ===== SUMMARY ===== */}
