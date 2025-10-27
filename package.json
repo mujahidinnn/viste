@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^11.0.0",
     "antd": "^5.27.6",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.3",
