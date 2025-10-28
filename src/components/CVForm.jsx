@@ -17,13 +17,13 @@ import {
   Slider,
   Space,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
 const { TextArea } = Input;
 
-export default function CVForm({ onChange }) {
+export default function CVForm({ data = {}, onChange }) {
   const [form] = Form.useForm();
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [rounded, setRounded] = useState(50);
@@ -43,6 +43,12 @@ export default function CVForm({ onChange }) {
     onChange({ ...values, avatarUrl, rounded });
   };
 
+  useEffect(() => {
+    if (data && Object.keys(data).length > 0) {
+      form.setFieldsValue(data);
+    }
+  }, [data, form]);
+
   return (
     <Form
       form={form}
@@ -61,11 +67,11 @@ export default function CVForm({ onChange }) {
         }}
       >
         <Avatar
-          src={avatarUrl}
+          src={data.avatarUrl || avatarUrl || "https://placehold.co/120"}
           size={120}
           shape="square"
           style={{
-            borderRadius: `${rounded}%`,
+            borderRadius: `${data.rounded ?? rounded}%`,
             border: "2px solid #d9d9d9",
             objectFit: "cover",
           }}

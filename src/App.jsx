@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Layout, Row, Col, Button, Typography } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import CVForm from "./components/CVForm";
@@ -11,6 +11,29 @@ const { Content } = Layout;
 export default function App() {
   const [data, setData] = useState({});
   const previewRef = useRef();
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("visteedata");
+      if (saved) {
+        setData(JSON.parse(saved));
+      }
+    } catch (err) {
+      console.warn("Gagal parse data CV:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      try {
+        sessionStorage.setItem("visteedata", JSON.stringify(data));
+      } catch (err) {
+        console.warn("Gagal simpan data CV:", err);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timeout);
+  }, [data]);
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
@@ -32,7 +55,7 @@ export default function App() {
             <Title level={4} style={{ marginBottom: 16 }}>
               Form Data CV
             </Title>
-            <CVForm onChange={setData} />
+            <CVForm data={data} onChange={setData} />
           </Col>
 
           {/* ================= RIGHT SIDE (PREVIEW) ================= */}
