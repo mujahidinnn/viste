@@ -5,6 +5,7 @@ import CVForm from "./components/CVForm";
 import CVPreview from "./components/CVPreview";
 import CVPreview2 from "./components/CVPreview2";
 import CVPreview3 from "./components/CVPreview3";
+import CVPreview4 from "./components/CVPreview4";
 import { exportPDF } from "./utils/pdf";
 
 const { Title } = Typography;
@@ -37,6 +38,8 @@ export default function App() {
 
   const renderSelectedTemplate = () => {
     switch (selectedTemplate) {
+      case "cv4":
+        return <CVPreview4 data={data} />;
       case "cv3":
         return <CVPreview3 data={data} />;
       case "cv2":
@@ -130,6 +133,12 @@ export default function App() {
                 <TemplateThumbnail
                   id="cv3"
                   component={<CVPreview3 data={data} />}
+                />
+              </Col>
+              <Col>
+                <TemplateThumbnail
+                  id="cv4"
+                  component={<CVPreview4 data={data} />}
                 />
               </Col>
             </Row>
