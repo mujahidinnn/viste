@@ -64,7 +64,7 @@ export default function CVPreview({ data }) {
       <div style={{ marginBottom: 16 }}>
         <InfoRow label="Email" value={email || "email@contoh.com"} />
         <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
-        <InfoRow label="Alamat" value={address | ""} />
+        <InfoRow label="Alamat" value={address || ""} />
       </div>
 
       {/* ===== SUMMARY ===== */}

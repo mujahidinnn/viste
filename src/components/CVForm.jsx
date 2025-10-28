@@ -1,8 +1,8 @@
 import {
+  BulbOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
-  BulbOutlined,
 } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -14,15 +14,14 @@ import {
   Form,
   Input,
   Modal,
-  Select,
   Slider,
   Space,
 } from "antd";
-import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 
 const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
+const { TextArea } = Input;
 
 export default function CVForm({ onChange }) {
   const [form] = Form.useForm();
