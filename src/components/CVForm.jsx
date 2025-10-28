@@ -9,6 +9,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
   Avatar,
   Button,
+  Checkbox,
   Collapse,
   DatePicker,
   Form,
@@ -140,6 +141,14 @@ export default function CVForm({ data = {}, onChange }) {
             Hapus Foto
           </Button>
         )}
+
+        <Form.Item
+          name="useIcon"
+          valuePropName="checked"
+          style={{ marginTop: 16 }}
+        >
+          <Checkbox defaultChecked={true}>Gunakan ikon pada CV</Checkbox>
+        </Form.Item>
       </div>
 
       {/* ====== INFORMASI DASAR ====== */}

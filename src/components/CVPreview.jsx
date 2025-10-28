@@ -20,6 +20,7 @@ export default function CVPreview({ data }) {
     languages = [],
     avatarUrl,
     rounded = 50,
+    useIcon = true,
   } = data || {};
 
   return (
@@ -52,9 +53,7 @@ export default function CVPreview({ data }) {
           />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22 }}>
-            {name || "Nama Lengkap Anda"}
-          </h1>
+          <h1 style={{ margin: 0, fontSize: 22 }}>{name || "Nama Lengkap"}</h1>
           <h3 style={{ margin: "4px 0", fontWeight: 400, color: "#555" }}>
             {position}
           </h3>
@@ -62,7 +61,10 @@ export default function CVPreview({ data }) {
       </div>
 
       {/* ===== PERSONAL INFO ===== */}
-      <SectionTitle icon={<UserOutlined />} title="Data Pribadi" />
+      <SectionTitle
+        icon={useIcon ? <UserOutlined /> : null}
+        title="Data Pribadi"
+      />
       <div style={{ marginBottom: 16 }}>
         <InfoRow label="Nama" value={name || "Nama Lengkap"} />
         <InfoRow label="Email" value={email || "email@contoh.com"} />
@@ -85,7 +87,10 @@ export default function CVPreview({ data }) {
       {/* ===== EXPERIENCE ===== */}
       {experiences.length > 0 && (
         <>
-          <SectionTitle icon={<ShoppingOutlined />} title="Pengalaman kerja" />
+          <SectionTitle
+            icon={useIcon ? <ShoppingOutlined /> : null}
+            title="Pengalaman kerja"
+          />
           {experiences.map((exp, i) => {
             const e = exp || {};
             return (
@@ -133,7 +138,10 @@ export default function CVPreview({ data }) {
       {/* ===== EDUCATION ===== */}
       {education.length > 0 && (
         <>
-          <SectionTitle icon={<ReadOutlined />} title="Pendidikan" />
+          <SectionTitle
+            icon={useIcon ? <ReadOutlined /> : null}
+            title="Pendidikan"
+          />
           {education.map((edu, i) => {
             const e = edu || {};
             return (
@@ -180,7 +188,10 @@ export default function CVPreview({ data }) {
       {/* ===== SKILLS ===== */}
       {skills.length > 0 && (
         <>
-          <SectionTitle icon={<StarOutlined />} title="Keterampilan" />
+          <SectionTitle
+            icon={useIcon ? <StarOutlined /> : null}
+            title="Keterampilan"
+          />
           <ul style={{ marginTop: 4 }}>
             {skills.map((s, i) => (
               <li key={i}>{s?.skill}</li>
@@ -192,7 +203,10 @@ export default function CVPreview({ data }) {
       {/* ===== LANGUAGES ===== */}
       {languages.length > 0 && (
         <>
-          <SectionTitle icon={<GlobalOutlined />} title="Bahasa" />
+          <SectionTitle
+            icon={useIcon ? <GlobalOutlined /> : null}
+            title="Bahasa"
+          />
           <ul style={{ marginTop: 4 }}>
             {languages.map((lang, i) => (
               <li key={i}>

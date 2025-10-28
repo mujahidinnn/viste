@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CVForm from "./components/CVForm";
 import CVPreview from "./components/CVPreview";
 import CVPreview2 from "./components/CVPreview2";
+import CVPreview3 from "./components/CVPreview3";
 import { exportPDF } from "./utils/pdf";
 
 const { Title } = Typography;
@@ -36,6 +37,8 @@ export default function App() {
 
   const renderSelectedTemplate = () => {
     switch (selectedTemplate) {
+      case "cv3":
+        return <CVPreview3 data={data} />;
       case "cv2":
         return <CVPreview2 data={data} />;
       default:
@@ -121,6 +124,12 @@ export default function App() {
                 <TemplateThumbnail
                   id="cv2"
                   component={<CVPreview2 data={data} />}
+                />
+              </Col>
+              <Col>
+                <TemplateThumbnail
+                  id="cv3"
+                  component={<CVPreview3 data={data} />}
                 />
               </Col>
             </Row>
