@@ -1,7 +1,8 @@
 import {
+  GlobalOutlined,
+  ReadOutlined,
   ShoppingOutlined,
   StarOutlined,
-  ReadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -16,6 +17,7 @@ export default function CVPreview({ data }) {
     experiences = [],
     education = [],
     skills = [],
+    languages = [],
     avatarUrl,
     rounded = 50,
   } = data || {};
@@ -62,6 +64,7 @@ export default function CVPreview({ data }) {
       {/* ===== PERSONAL INFO ===== */}
       <SectionTitle icon={<UserOutlined />} title="Data Pribadi" />
       <div style={{ marginBottom: 16 }}>
+        <InfoRow label="Nama" value={name || "Nama Lengkap"} />
         <InfoRow label="Email" value={email || "email@contoh.com"} />
         <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
         <InfoRow label="Alamat" value={address || ""} />
@@ -181,6 +184,23 @@ export default function CVPreview({ data }) {
           <ul style={{ marginTop: 4 }}>
             {skills.map((s, i) => (
               <li key={i}>{s?.skill}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {/* ===== LANGUAGES ===== */}
+      {languages.length > 0 && (
+        <>
+          <SectionTitle icon={<GlobalOutlined />} title="Bahasa" />
+          <ul style={{ marginTop: 4 }}>
+            {languages.map((lang, i) => (
+              <li key={i}>
+                {lang?.language}{" "}
+                {lang?.level ? (
+                  <span style={{ color: "#777" }}>– {lang.level}</span>
+                ) : null}
+              </li>
             ))}
           </ul>
         </>

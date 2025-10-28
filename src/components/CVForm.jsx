@@ -304,6 +304,32 @@ export default function CVForm({ data = {}, onChange }) {
           />
         )}
       </Form.List>
+
+      {/* ====== BAHASA ====== */}
+      <Form.List name="languages">
+        {(fields, { add, remove }) => (
+          <SectionCollapse
+            title="Bahasa"
+            tipsKey="language"
+            tipsTitle="Tips Bahasa"
+            tipsContent={
+              <ol>
+                <li>Selalu sebutkan bahasa asli Anda.</li>
+                <li>
+                  Sebutkan sebanyak-banyaknya bahasa, tetapi hanya bahasa yang
+                  dapat Anda gunakan, baca, dan benar-benar pahami.
+                </li>
+              </ol>
+            }
+            fields={fields}
+            add={add}
+            remove={remove}
+            form={form}
+            handleChange={handleChange}
+            languages
+          />
+        )}
+      </Form.List>
     </Form>
   );
 }
@@ -320,11 +346,11 @@ function SectionCollapse({
   handleChange,
   education,
   skills,
+  languages,
 }) {
   const [show, setShow] = useState(false);
   const toggle = (value = true) => setShow(value);
 
-  // helper buat ambil periode dalam format singkat
   const formatPeriod = (period) => {
     if (!period || !Array.isArray(period) || period.length !== 2) return "";
     const [start, end] = period;
@@ -363,26 +389,31 @@ function SectionCollapse({
 
       <Collapse accordion>
         {fields.map(({ key, name, ...restField }) => {
-          // ambil data untuk header
           const fieldValues = form.getFieldValue(
             education
               ? ["education", name]
               : skills
               ? ["skills", name]
+              : languages
+              ? ["languages", name]
               : ["experiences", name]
           );
 
           let headerText = `Item #${key + 1}`;
-
           if (skills && fieldValues?.skill) {
             headerText = fieldValues.skill;
           } else if (education && (fieldValues?.major || fieldValues?.period)) {
             const jurusan = fieldValues?.major || "";
             const period = formatPeriod(fieldValues?.period);
             headerText = `${jurusan}${period ? ` (${period})` : ""}`;
+          } else if (languages && fieldValues?.language) {
+            headerText = `${fieldValues.language}${
+              fieldValues.level ? ` (${fieldValues.level})` : ""
+            }`;
           } else if (
             !education &&
             !skills &&
+            !languages &&
             (fieldValues?.position || fieldValues?.period)
           ) {
             const posisi = fieldValues?.position || "";
@@ -414,11 +445,12 @@ function SectionCollapse({
                   border: "1px solid #eee",
                 }}
               >
+                {/* ===== SKILL ===== */}
                 {skills ? (
                   <Form.Item {...restField} name={[name, "skill"]}>
                     <Input placeholder="Contoh: React.js, Node.js, UI Design" />
                   </Form.Item>
-                ) : education ? (
+                ) : /* ===== EDUCATION ===== */ education ? (
                   <>
                     <Form.Item
                       {...restField}
@@ -466,7 +498,25 @@ function SectionCollapse({
                       />
                     </Form.Item>
                   </>
+                ) : /* ===== LANGUAGES ===== */ languages ? (
+                  <>
+                    <Form.Item
+                      {...restField}
+                      label="Bahasa"
+                      name={[name, "language"]}
+                    >
+                      <Input placeholder="Contoh: Bahasa Inggris" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      label="Tingkat Kemampuan"
+                      name={[name, "level"]}
+                    >
+                      <Input placeholder="Contoh: Lancar, Menengah, Dasar" />
+                    </Form.Item>
+                  </>
                 ) : (
+                  /* ===== EXPERIENCES ===== */
                   <>
                     <Form.Item
                       {...restField}
