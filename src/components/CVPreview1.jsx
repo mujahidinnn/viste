@@ -5,8 +5,9 @@ import {
   StarOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { formatPeriod } from "../utils/formatPeriod";
 
-export default function CVPreview({ data }) {
+export default function CVPreview1({ data }) {
   const {
     name,
     position,
@@ -249,16 +250,3 @@ const InfoRow = ({ label, value }) => (
     {value || "-"}
   </p>
 );
-
-function formatPeriod(period) {
-  if (!Array.isArray(period) || period.length === 0) return "";
-  const [start, end] = period;
-  const format = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    const month = d.toLocaleString("default", { month: "short" });
-    const year = d.getFullYear();
-    return `${month} ${year}`;
-  };
-  return `${format(start)}${end ? " – " + format(end) : ""}`;
-}

@@ -1,11 +1,12 @@
 import {
-  UserOutlined,
   EditOutlined,
-  ShoppingOutlined,
-  ReadOutlined,
-  StarOutlined,
   GlobalOutlined,
+  ReadOutlined,
+  ShoppingOutlined,
+  StarOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+import { formatPeriod } from "../utils/formatPeriod";
 
 export default function CVPreview4({ data }) {
   const {
@@ -95,9 +96,9 @@ export default function CVPreview4({ data }) {
           title="Data Pribadi"
           icon={useIcon ? <UserOutlined /> : null}
         />
-        <InfoRow label="Nama" value={name || "-"} />
-        <InfoRow label="Email" value={email || "-"} />
-        <InfoRow label="Telepon" value={phone || "-"} />
+        <InfoRow label="Nama" value={name || "Nama Lengkap"} />
+        <InfoRow label="Telepon" value={phone || "08xx-xxxx-xxxx"} />
+        <InfoRow label="Email" value={email || "email@contoh.com"} />
         <InfoRow label="Alamat" value={address || "-"} />
 
         {summary && (
@@ -263,18 +264,4 @@ function InfoRow({ label, value }) {
       {value || "-"}
     </p>
   );
-}
-
-function formatPeriod(period) {
-  if (!Array.isArray(period) || period.length === 0) return "";
-  const [start, end] = period;
-  const format = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    if (isNaN(d)) return "";
-    const month = d.toLocaleString("default", { month: "short" });
-    const year = d.getFullYear();
-    return `${month} ${year}`;
-  };
-  return `${format(start)}${end ? " – " + format(end) : ""}`;
 }

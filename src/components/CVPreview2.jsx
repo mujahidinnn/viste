@@ -6,6 +6,7 @@ import {
   StarOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { formatPeriod } from "../utils/formatPeriod";
 
 export default function CVPreview2({ data }) {
   const {
@@ -253,20 +254,8 @@ function SectionHeading({ title, icon }) {
 function InfoRow({ label, value }) {
   return (
     <div style={{ marginBottom: 4 }}>
-      <strong>{label}</strong> : {value}
+      <strong style={{ display: "inline-block", width: 100 }}>{label}</strong> :{" "}
+      {value}
     </div>
   );
-}
-
-function formatPeriod(period) {
-  if (!Array.isArray(period) || period.length === 0) return "";
-  const [start, end] = period;
-  const format = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    const month = d.toLocaleString("default", { month: "short" });
-    const year = d.getFullYear();
-    return `${month} ${year}`;
-  };
-  return `${format(start)}${end ? " – " + format(end) : ""}`;
 }

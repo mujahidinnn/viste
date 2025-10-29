@@ -19,9 +19,12 @@ import {
   Space,
 } from "antd";
 import { useEffect, useState } from "react";
+import Cropper from "react-easy-crop";
+import useWindowSize from "../hooks/useWindowSize";
+import { editorConfiguration } from "../libs/packages/ckeditor";
+import { getCroppedImg } from "../utils/cropImage";
 
 const { RangePicker } = DatePicker;
-const { Panel } = Collapse;
 const { TextArea } = Input;
 
 export default function CVForm({ data = {}, onChange }) {
@@ -34,6 +37,13 @@ export default function CVForm({ data = {}, onChange }) {
     education: false,
     skill: false,
   });
+
+  // === Cropper State ===
+  const [cropModal, setCropModal] = useState(false);
+  const [tempImage, setTempImage] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const toggleModal = (key, value = true) => {
     setShow((prev) => ({ ...prev, [key]: value }));
@@ -94,10 +104,8 @@ export default function CVForm({ data = {}, onChange }) {
 
               const reader = new FileReader();
               reader.onload = (ev) => {
-                const newUrl = ev.target.result;
-                setAvatarUrl(newUrl);
-                const values = form.getFieldsValue();
-                onChange({ ...values, avatarUrl: newUrl, rounded });
+                setTempImage(ev.target.result);
+                setCropModal(true);
               };
               reader.readAsDataURL(file);
             }}
@@ -109,6 +117,62 @@ export default function CVForm({ data = {}, onChange }) {
             Pilih Foto
           </Button>
         </div>
+
+        {/* === Cropper Modal === */}
+        <Modal
+          open={cropModal}
+          title="Sesuaikan Foto"
+          onCancel={() => setCropModal(false)}
+          onOk={async () => {
+            try {
+              const croppedImg = await getCroppedImg(
+                tempImage,
+                croppedAreaPixels
+              );
+              setAvatarUrl(croppedImg);
+              const values = form.getFieldsValue();
+              onChange({ ...values, avatarUrl: croppedImg, rounded });
+              setCropModal(false);
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+          okText="Gunakan Foto"
+          width={600}
+        >
+          {tempImage && (
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: 300,
+                background: "#333",
+              }}
+            >
+              <Cropper
+                image={tempImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_, croppedPixels) =>
+                  setCroppedAreaPixels(croppedPixels)
+                }
+              />
+            </div>
+          )}
+          <div style={{ marginTop: 10 }}>
+            <span>Zoom</span>
+            <Slider
+              min={1}
+              max={3}
+              step={0.1}
+              value={zoom}
+              onChange={setZoom}
+            />
+          </div>
+        </Modal>
 
         <div style={{ marginTop: 16 }}>
           <span style={{ display: "block", marginBottom: 4 }}>
@@ -183,13 +247,21 @@ export default function CVForm({ data = {}, onChange }) {
           boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
         }}
       >
-        <Form.Item
-          label="Deskripsi Diri"
-          name="summary"
-          rules={[{ required: true }]}
+        <label
+          style={{
+            fontWeight: 600,
+            fontSize: 16,
+            display: "block",
+            marginBottom: 12,
+            color: "#003366",
+          }}
         >
+          Deskripsi Diri
+        </label>
+        <Form.Item name="summary">
           <CKEditor
             editor={ClassicEditor}
+            config={editorConfiguration}
             data={form.getFieldValue("summary") || ""}
             onChange={(_, editor) => {
               const value = editor.getData();
@@ -357,8 +429,11 @@ function SectionCollapse({
   skills,
   languages,
 }) {
-  const [show, setShow] = useState(false);
-  const toggle = (value = true) => setShow(value);
+  const { isMobile } = useWindowSize();
+  const [activeKey, setActiveKey] = useState(null);
+  const [showTips, setShowTips] = useState(false);
+
+  const toggleTips = (value = true) => setShowTips(value);
 
   const formatPeriod = (period) => {
     if (!period || !Array.isArray(period) || period.length !== 2) return "";
@@ -372,6 +447,178 @@ function SectionCollapse({
         : "";
     return `${format(start)} - ${format(end)}`;
   };
+
+  const items = fields.map(({ key, name, ...restField }) => {
+    const fieldValues = form.getFieldValue(
+      education
+        ? ["education", name]
+        : skills
+        ? ["skills", name]
+        : languages
+        ? ["languages", name]
+        : ["experiences", name]
+    );
+
+    let headerText = `Item #${key + 1}`;
+    if (skills && fieldValues?.skill) headerText = fieldValues.skill;
+    else if (education && (fieldValues?.major || fieldValues?.period)) {
+      const jurusan = fieldValues?.major || "";
+      const period = formatPeriod(fieldValues?.period);
+      headerText = `${jurusan}${period ? ` (${period})` : ""}`;
+    } else if (languages && fieldValues?.language) {
+      headerText = `${fieldValues.language}${
+        fieldValues.level ? ` (${fieldValues.level})` : ""
+      }`;
+    } else if (
+      !education &&
+      !skills &&
+      !languages &&
+      (fieldValues?.position || fieldValues?.period)
+    ) {
+      const posisi = fieldValues?.position || "";
+      const period = formatPeriod(fieldValues?.period);
+      headerText = `${posisi}${period ? ` (${period})` : ""}`;
+    }
+
+    return {
+      key,
+      label: (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>{headerText || `Item #${key + 1}`}</span>
+          <MinusCircleOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              remove(name);
+              if (activeKey === key) setActiveKey(null);
+            }}
+            style={{ color: "red" }}
+          />
+        </div>
+      ),
+      children: (
+        <Space
+          direction="vertical"
+          style={{
+            display: "flex",
+            background: "#fff",
+            padding: 16,
+            borderRadius: 8,
+            border: "1px solid #eee",
+          }}
+        >
+          {/* SKILL */}
+          {skills ? (
+            <Form.Item {...restField} name={[name, "skill"]}>
+              <Input placeholder="Contoh: React.js, Node.js, UI Design" />
+            </Form.Item>
+          ) : education ? (
+            <>
+              <Form.Item
+                {...restField}
+                label="Institusi"
+                name={[name, "school"]}
+              >
+                <Input placeholder="Nama sekolah / universitas" />
+              </Form.Item>
+              <Form.Item {...restField} label="Jurusan" name={[name, "major"]}>
+                <Input placeholder="Contoh: Informatika" />
+              </Form.Item>
+              <Form.Item {...restField} label="Periode" name={[name, "period"]}>
+                <RangePicker picker="month" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                {...restField}
+                label="Deskripsi"
+                name={[name, "description"]}
+              >
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfiguration}
+                  data={
+                    form.getFieldValue(["education", name, "description"]) || ""
+                  }
+                  onChange={(_, editor) => {
+                    const value = editor.getData();
+                    form.setFieldValue(
+                      ["education", name, "description"],
+                      value
+                    );
+                    handleChange();
+                  }}
+                />
+              </Form.Item>
+            </>
+          ) : languages ? (
+            <>
+              <Form.Item
+                {...restField}
+                label="Bahasa"
+                name={[name, "language"]}
+              >
+                <Input placeholder="Contoh: Bahasa Inggris" />
+              </Form.Item>
+              <Form.Item
+                {...restField}
+                label="Tingkat Kemampuan"
+                name={[name, "level"]}
+              >
+                <Input placeholder="Contoh: Penutur Asli, Lancar, Menengah, Dasar" />
+              </Form.Item>
+            </>
+          ) : (
+            // EXPERIENCES
+            <>
+              <Form.Item
+                {...restField}
+                label="Posisi / Jabatan"
+                name={[name, "position"]}
+              >
+                <Input placeholder="Contoh: Frontend Developer" />
+              </Form.Item>
+              <Form.Item
+                {...restField}
+                label="Perusahaan"
+                name={[name, "company"]}
+              >
+                <Input placeholder="Nama perusahaan" />
+              </Form.Item>
+              <Form.Item {...restField} label="Periode" name={[name, "period"]}>
+                <RangePicker picker="month" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                {...restField}
+                label="Deskripsi"
+                name={[name, "description"]}
+              >
+                <CKEditor
+                  editor={ClassicEditor}
+                  config={editorConfiguration}
+                  data={
+                    form.getFieldValue(["experiences", name, "description"]) ||
+                    ""
+                  }
+                  onChange={(_, editor) => {
+                    const value = editor.getData();
+                    form.setFieldValue(
+                      ["experiences", name, "description"],
+                      value
+                    );
+                    handleChange();
+                  }}
+                />
+              </Form.Item>
+            </>
+          )}
+        </Space>
+      ),
+    };
+  });
 
   return (
     <div
@@ -396,194 +643,20 @@ function SectionCollapse({
         {title}
       </label>
 
-      <Collapse accordion>
-        {fields.map(({ key, name, ...restField }) => {
-          const fieldValues = form.getFieldValue(
-            education
-              ? ["education", name]
-              : skills
-              ? ["skills", name]
-              : languages
-              ? ["languages", name]
-              : ["experiences", name]
-          );
-
-          let headerText = `Item #${key + 1}`;
-          if (skills && fieldValues?.skill) {
-            headerText = fieldValues.skill;
-          } else if (education && (fieldValues?.major || fieldValues?.period)) {
-            const jurusan = fieldValues?.major || "";
-            const period = formatPeriod(fieldValues?.period);
-            headerText = `${jurusan}${period ? ` (${period})` : ""}`;
-          } else if (languages && fieldValues?.language) {
-            headerText = `${fieldValues.language}${
-              fieldValues.level ? ` (${fieldValues.level})` : ""
-            }`;
-          } else if (
-            !education &&
-            !skills &&
-            !languages &&
-            (fieldValues?.position || fieldValues?.period)
-          ) {
-            const posisi = fieldValues?.position || "";
-            const period = formatPeriod(fieldValues?.period);
-            headerText = `${posisi}${period ? ` (${period})` : ""}`;
-          }
-
-          return (
-            <Panel
-              header={headerText || `Item #${key + 1}`}
-              key={key}
-              extra={
-                <MinusCircleOutlined
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    remove(name);
-                  }}
-                  style={{ color: "red" }}
-                />
-              }
-            >
-              <Space
-                direction="vertical"
-                style={{
-                  display: "flex",
-                  background: "#fff",
-                  padding: 16,
-                  borderRadius: 8,
-                  border: "1px solid #eee",
-                }}
-              >
-                {/* ===== SKILL ===== */}
-                {skills ? (
-                  <Form.Item {...restField} name={[name, "skill"]}>
-                    <Input placeholder="Contoh: React.js, Node.js, UI Design" />
-                  </Form.Item>
-                ) : /* ===== EDUCATION ===== */ education ? (
-                  <>
-                    <Form.Item
-                      {...restField}
-                      label="Institusi"
-                      name={[name, "school"]}
-                    >
-                      <Input placeholder="Nama sekolah / universitas" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Jurusan"
-                      name={[name, "major"]}
-                    >
-                      <Input placeholder="Contoh: Informatika" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Periode"
-                      name={[name, "period"]}
-                    >
-                      <RangePicker picker="month" style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Deskripsi"
-                      name={[name, "description"]}
-                    >
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={
-                          form.getFieldValue([
-                            "education",
-                            name,
-                            "description",
-                          ]) || ""
-                        }
-                        onChange={(_, editor) => {
-                          const value = editor.getData();
-                          form.setFieldValue(
-                            ["education", name, "description"],
-                            value
-                          );
-                          handleChange();
-                        }}
-                      />
-                    </Form.Item>
-                  </>
-                ) : /* ===== LANGUAGES ===== */ languages ? (
-                  <>
-                    <Form.Item
-                      {...restField}
-                      label="Bahasa"
-                      name={[name, "language"]}
-                    >
-                      <Input placeholder="Contoh: Bahasa Inggris" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Tingkat Kemampuan"
-                      name={[name, "level"]}
-                    >
-                      <Input placeholder="Contoh: Lancar, Menengah, Dasar" />
-                    </Form.Item>
-                  </>
-                ) : (
-                  /* ===== EXPERIENCES ===== */
-                  <>
-                    <Form.Item
-                      {...restField}
-                      label="Posisi / Jabatan"
-                      name={[name, "position"]}
-                    >
-                      <Input placeholder="Contoh: Frontend Developer" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Perusahaan"
-                      name={[name, "company"]}
-                    >
-                      <Input placeholder="Nama perusahaan" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Periode"
-                      name={[name, "period"]}
-                    >
-                      <RangePicker picker="month" style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label="Deskripsi"
-                      name={[name, "description"]}
-                    >
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={
-                          form.getFieldValue([
-                            "experiences",
-                            name,
-                            "description",
-                          ]) || ""
-                        }
-                        onChange={(_, editor) => {
-                          const value = editor.getData();
-                          form.setFieldValue(
-                            ["experiences", name, "description"],
-                            value
-                          );
-                          handleChange();
-                        }}
-                      />
-                    </Form.Item>
-                  </>
-                )}
-              </Space>
-            </Panel>
-          );
-        })}
-      </Collapse>
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        items={items}
+      />
 
       <Form.Item style={{ marginTop: 12 }}>
         <Button
           type="dashed"
-          onClick={() => add()}
+          onClick={() => {
+            add();
+            setActiveKey(fields.length);
+          }}
           block
           icon={<PlusOutlined />}
         >
@@ -591,14 +664,15 @@ function SectionCollapse({
         </Button>
       </Form.Item>
 
-      <Button icon={<BulbOutlined />} onClick={() => toggle(true)}>
+      <Button icon={<BulbOutlined />} onClick={() => toggleTips(true)}>
         Tips
       </Button>
       <Modal
-        open={show}
-        onCancel={() => toggle(false)}
+        open={showTips}
+        onCancel={() => toggleTips(false)}
         footer={null}
         title={tipsTitle}
+        centered={!isMobile}
       >
         {tipsContent}
       </Modal>

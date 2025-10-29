@@ -2,7 +2,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Col, Layout, Row, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import CVForm from "./components/CVForm";
-import CVPreview from "./components/CVPreview";
+import CVPreview1 from "./components/CVPreview1";
 import CVPreview2 from "./components/CVPreview2";
 import CVPreview3 from "./components/CVPreview3";
 import CVPreview4 from "./components/CVPreview4";
@@ -45,7 +45,7 @@ export default function App() {
       case "cv2":
         return <CVPreview2 data={data} />;
       default:
-        return <CVPreview data={data} />;
+        return <CVPreview1 data={data} />;
     }
   };
 
@@ -73,7 +73,7 @@ export default function App() {
           transformOrigin: "top left",
           width: 900,
           height: 1300,
-          pointerEvents: "none", // biar klik-nya tetap di wrapper
+          pointerEvents: "none",
         }}
       >
         {component}
@@ -120,7 +120,7 @@ export default function App() {
               <Col>
                 <TemplateThumbnail
                   id="cv1"
-                  component={<CVPreview data={data} />}
+                  component={<CVPreview1 data={data} />}
                 />
               </Col>
               <Col>
