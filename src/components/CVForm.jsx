@@ -43,6 +43,7 @@ export default function CVForm({ data = {}, onChange }) {
   const [tempImage, setTempImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const toggleModal = (key, value = true) => {
@@ -153,9 +154,11 @@ export default function CVForm({ data = {}, onChange }) {
                 image={tempImage}
                 crop={crop}
                 zoom={zoom}
+                rotation={rotation}
                 aspect={1}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
+                onRotationChange={setRotation}
                 onCropComplete={(_, croppedPixels) =>
                   setCroppedAreaPixels(croppedPixels)
                 }
@@ -170,6 +173,17 @@ export default function CVForm({ data = {}, onChange }) {
               step={0.1}
               value={zoom}
               onChange={setZoom}
+            />
+          </div>
+
+          <div style={{ marginTop: 10 }}>
+            <span>Rotasi ({rotation}°)</span>
+            <Slider
+              min={-360}
+              max={360}
+              step={1}
+              value={rotation}
+              onChange={setRotation}
             />
           </div>
         </Modal>
