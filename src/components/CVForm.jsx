@@ -10,11 +10,13 @@ import {
   Avatar,
   Button,
   Checkbox,
+  Col,
   Collapse,
   DatePicker,
   Form,
   Input,
   Modal,
+  Row,
   Slider,
   Space,
 } from "antd";
@@ -24,7 +26,6 @@ import useWindowSize from "../hooks/useWindowSize";
 import { editorConfiguration } from "../libs/packages/ckeditor";
 import { getCroppedImg } from "../utils/cropImage";
 
-const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 export default function CVForm({ data = {}, onChange }) {
@@ -543,9 +544,71 @@ function SectionCollapse({
               <Form.Item {...restField} label="Jurusan" name={[name, "major"]}>
                 <Input placeholder="Contoh: Informatika" />
               </Form.Item>
-              <Form.Item {...restField} label="Periode" name={[name, "period"]}>
-                <RangePicker picker="month" style={{ width: "100%" }} />
-              </Form.Item>
+
+              <label>Periode</label>
+              <Row gutter={12} align="top" style={{ marginBottom: "24px" }}>
+                <Col xs={24} sm={11}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "start_month"]}
+                    style={{ margin: 0 }}
+                  >
+                    <DatePicker
+                      picker="month"
+                      placeholder="Pilih bulan mulai"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col
+                  xs={24}
+                  sm={2}
+                  style={{ textAlign: "center", lineHeight: "32px" }}
+                >
+                  —
+                </Col>
+                <Col xs={24} sm={11}>
+                  <Form.Item
+                    shouldUpdate={(prev, next) =>
+                      prev?.education?.[name]?.untilNow !==
+                      next?.education?.[name]?.untilNow
+                    }
+                    noStyle
+                  >
+                    {({ getFieldValue }) => {
+                      const untilNow = getFieldValue([
+                        "education",
+                        name,
+                        "untilNow",
+                      ]);
+                      return (
+                        <Form.Item
+                          {...restField}
+                          name={[name, "end_month"]}
+                          style={{ margin: 0 }}
+                        >
+                          <DatePicker
+                            picker="month"
+                            placeholder="Pilih bulan selesai"
+                            disabled={untilNow}
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      );
+                    }}
+                  </Form.Item>
+
+                  <Form.Item
+                    {...restField}
+                    name={[name, "untilNow"]}
+                    valuePropName="checked"
+                    style={{ margin: 0 }}
+                  >
+                    <Checkbox>Sampai saat ini</Checkbox>
+                  </Form.Item>
+                </Col>
+              </Row>
+
               <Form.Item
                 {...restField}
                 label="Deskripsi"
@@ -602,9 +665,70 @@ function SectionCollapse({
               >
                 <Input placeholder="Nama perusahaan" />
               </Form.Item>
-              <Form.Item {...restField} label="Periode" name={[name, "period"]}>
-                <RangePicker picker="month" style={{ width: "100%" }} />
-              </Form.Item>
+
+              <label>Periode</label>
+              <Row gutter={12} align="top" style={{ marginBottom: "24px" }}>
+                <Col xs={24} sm={11}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "start_month"]}
+                    style={{ margin: 0 }}
+                  >
+                    <DatePicker
+                      picker="month"
+                      placeholder="Pilih bulan mulai"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col
+                  xs={24}
+                  sm={2}
+                  style={{ textAlign: "center", lineHeight: "32px" }}
+                >
+                  —
+                </Col>
+                <Col xs={24} sm={11}>
+                  <Form.Item
+                    shouldUpdate={(prev, next) =>
+                      prev?.education?.[name]?.untilNow !==
+                      next?.education?.[name]?.untilNow
+                    }
+                    noStyle
+                  >
+                    {({ getFieldValue }) => {
+                      const untilNow = getFieldValue([
+                        "education",
+                        name,
+                        "untilNow",
+                      ]);
+                      return (
+                        <Form.Item
+                          {...restField}
+                          name={[name, "end_month"]}
+                          style={{ margin: 0 }}
+                        >
+                          <DatePicker
+                            picker="month"
+                            placeholder="Pilih bulan selesai"
+                            disabled={untilNow}
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      );
+                    }}
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "untilNow"]}
+                    valuePropName="checked"
+                    style={{ margin: 0 }}
+                  >
+                    <Checkbox>Sampai saat ini</Checkbox>
+                  </Form.Item>
+                </Col>
+              </Row>
+
               <Form.Item
                 {...restField}
                 label="Deskripsi"

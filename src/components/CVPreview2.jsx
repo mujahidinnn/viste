@@ -142,7 +142,7 @@ export default function CVPreview2({ data }) {
                     marginBottom: 6,
                   }}
                 >
-                  {formatPeriod(e.period)}
+                  {formatPeriod(e)}
                 </div>
                 {e.description && (
                   <div
@@ -174,7 +174,7 @@ export default function CVPreview2({ data }) {
                   {e.school}
                 </div>
                 <div style={{ color: "#777", fontSize: 13 }}>
-                  {formatPeriod(e.period)}
+                  {formatPeriod(e)}
                 </div>
                 {e.description && (
                   <div

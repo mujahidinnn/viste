@@ -119,7 +119,7 @@ export default function CVPreview1({ data }) {
                     </p>
                   </div>
                   <span style={{ color: "#777", fontSize: 13 }}>
-                    {formatPeriod(e.period)}
+                    {formatPeriod(e)}
                   </span>
                 </div>
 
@@ -169,7 +169,7 @@ export default function CVPreview1({ data }) {
                     </p>
                   </div>
                   <span style={{ color: "#777", fontSize: 13 }}>
-                    {formatPeriod(e.period)}
+                    {formatPeriod(e)}
                   </span>
                 </div>
 
