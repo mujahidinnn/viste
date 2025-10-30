@@ -32,9 +32,7 @@ export default function CVPreview4({ data }) {
         background: "#ffffff",
         color: "#1a1a1a",
         lineHeight: 1.6,
-        borderRadius: 8,
         overflow: "hidden",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
       }}
     >
       {/* ===== HEADER ===== */}
@@ -43,7 +41,7 @@ export default function CVPreview4({ data }) {
           background: "#f0f0f0",
           display: "flex",
           alignItems: "center",
-          padding: "24px 32px",
+          padding: "24px 24px",
           borderBottom: "3px solid #dfdfdf",
         }}
       >
@@ -89,7 +87,7 @@ export default function CVPreview4({ data }) {
       {/* ===== BODY ===== */}
       <div
         style={{
-          padding: 32,
+          padding: 24,
         }}
       >
         <SectionHeading
@@ -257,11 +255,14 @@ function SectionHeading({ title, icon }) {
   );
 }
 
-function InfoRow({ label, value }) {
-  return (
-    <p style={{ margin: "4px 0", fontSize: 14 }}>
-      <strong style={{ display: "inline-block", width: 100 }}>{label}</strong> :{" "}
-      {value || "-"}
-    </p>
-  );
-}
+const InfoRow = ({ label, value }) => (
+  <table style={{ margin: "4px 0", fontSize: "14px" }}>
+    <tbody>
+      <tr style={{ verticalAlign: "top" }}>
+        <td style={{ width: 120 }}>{label}</td>
+        <td style={{ width: 10 }}> : </td>
+        <td> {value || "-"}</td>
+      </tr>
+    </tbody>
+  </table>
+);

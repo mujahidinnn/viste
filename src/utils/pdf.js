@@ -1,15 +1,13 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import html2pdf from "html2pdf.js";
 
-export async function exportPDF(ref) {
+export async function exportPDF(ref, filename = "My-CV") {
   const element = ref.current;
-  const canvas = await html2canvas(element, { scale: 2 });
-  const imgData = canvas.toDataURL("image/png");
-
-  const pdf = new jsPDF("p", "mm", "a4");
-  const width = pdf.internal.pageSize.getWidth();
-  const height = (canvas.height * width) / canvas.width;
-
-  pdf.addImage(imgData, "PNG", 0, 0, width, height);
-  pdf.save("CV.pdf");
+  const opt = {
+    margin: [12, 12, 12, 12],
+    filename: `${filename}.pdf`,
+    image: { type: "jpeg", quality: 1 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  };
+  await html2pdf().set(opt).from(element).save();
 }

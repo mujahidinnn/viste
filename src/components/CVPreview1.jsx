@@ -29,8 +29,7 @@ export default function CVPreview1({ data }) {
       style={{
         fontFamily: "Arial, sans-serif",
         background: "#fff",
-        padding: 32,
-        borderRadius: 8,
+        padding: 24,
         color: "#333",
         lineHeight: 1.6,
       }}
@@ -245,8 +244,13 @@ const SectionTitle = ({ icon, title }) => (
 );
 
 const InfoRow = ({ label, value }) => (
-  <p style={{ margin: "4px 0" }}>
-    <strong style={{ display: "inline-block", width: 120 }}>{label} </strong> :{" "}
-    {value || "-"}
-  </p>
+  <table style={{ margin: "4px 0" }}>
+    <tbody>
+      <tr style={{ verticalAlign: "top" }}>
+        <td style={{ width: 120 }}>{label}</td>
+        <td style={{ width: 10 }}> : </td>
+        <td> {value || "-"}</td>
+      </tr>
+    </tbody>
+  </table>
 );

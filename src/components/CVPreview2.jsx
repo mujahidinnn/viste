@@ -30,14 +30,14 @@ export default function CVPreview2({ data }) {
       style={{
         fontFamily: "Georgia, serif",
         background: "#fff",
-        padding: 32,
+        padding: 24,
         color: "#222",
         lineHeight: 1.7,
         margin: "0 auto",
       }}
     >
       {/* ===== HEADER ===== */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 32 }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
         <img
           src={avatarUrl || "https://placehold.co/100x100"}
           alt="avatar"
@@ -251,11 +251,14 @@ function SectionHeading({ title, icon }) {
   );
 }
 
-function InfoRow({ label, value }) {
-  return (
-    <div style={{ marginBottom: 4 }}>
-      <strong style={{ display: "inline-block", width: 100 }}>{label}</strong> :{" "}
-      {value}
-    </div>
-  );
-}
+const InfoRow = ({ label, value }) => (
+  <table style={{ marginBottom: 4 }}>
+    <tbody>
+      <tr style={{ verticalAlign: "top" }}>
+        <td style={{ width: 120 }}>{label}</td>
+        <td style={{ width: 10 }}> : </td>
+        <td> {value || "-"}</td>
+      </tr>
+    </tbody>
+  </table>
+);

@@ -45,7 +45,7 @@ export default function CVPreview3({ data }) {
 
       <div
         style={{
-          padding: "0 32px 32px 32px",
+          padding: "0 24px 24px 24px",
         }}
       >
         <div
@@ -98,6 +98,7 @@ export default function CVPreview3({ data }) {
             display: "flex",
             gap: 16,
             marginTop: 24,
+            alignItems: "stretch",
           }}
         >
           {/* ===== PRIBADI ===== */}
@@ -138,11 +139,10 @@ export default function CVPreview3({ data }) {
           {/* ===== SEPARATOR ===== */}
           <div
             style={{
-              height: "100vh",
               width: "2px",
               background: "#ccc",
             }}
-          ></div>
+          />
 
           {/* ===== OTHER ===== */}
           <div

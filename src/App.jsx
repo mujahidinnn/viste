@@ -1,5 +1,6 @@
 import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Col, Layout, Row, Typography } from "antd";
+import { Input } from "antd/es";
 import { useEffect, useRef, useState } from "react";
 import CVForm from "./components/CVForm";
 import CVPreview1 from "./components/CVPreview1";
@@ -12,6 +13,7 @@ const { Title } = Typography;
 const { Content } = Layout;
 
 export default function App() {
+  const [fileName, setFileName] = useState("");
   const [data, setData] = useState({});
   const [selectedTemplate, setSelectedTemplate] = useState("cv1");
   const previewRef = useRef();
@@ -107,7 +109,7 @@ export default function App() {
             xs={24}
             md={14}
             style={{
-              background: "#fff",
+              background: "#fafafa",
               padding: 32,
               borderRadius: 8,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
@@ -116,7 +118,13 @@ export default function App() {
             }}
           >
             <Title level={4}>Pilih Template</Title>
-            <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Row
+              gutter={[16, 16]}
+              style={{
+                marginBottom: 24,
+                background: "#fff",
+              }}
+            >
               <Col>
                 <TemplateThumbnail
                   id="cv1"
@@ -143,16 +151,36 @@ export default function App() {
               </Col>
             </Row>
 
-            <Title level={4} style={{ marginTop: 8 }}>
-              Preview CV
-            </Title>
+            <Row gutter={24}>
+              <Col>
+                <Title level={4} style={{ marginTop: 8 }}>
+                  Preview CV
+                </Title>
+              </Col>
+              <Col>
+                <Input
+                  name="filename"
+                  value={
+                    fileName ||
+                    (data?.name && `CV-${data?.name?.replace(/\s+/g, "")}`) ||
+                    "My-CV"
+                  }
+                  onChange={(e) => setFileName(e.target.value)}
+                  placeholder="Masukkan nama file"
+                  variant="underlined"
+                  suffix=".pdf"
+                  style={{
+                    background: "transparent",
+                    width: "250px",
+                  }}
+                />
+              </Col>
+            </Row>
             <div
               ref={previewRef}
               style={{
                 minHeight: "80vh",
                 background: "#fafafa",
-                padding: 24,
-                borderRadius: 8,
               }}
             >
               {renderSelectedTemplate()}
@@ -161,7 +189,14 @@ export default function App() {
             <Button
               type="primary"
               icon={<DownloadOutlined />}
-              onClick={() => exportPDF(previewRef)}
+              onClick={() => {
+                const resultname =
+                  fileName ||
+                  (data?.name && `CV-${data?.name?.replace(/\s+/g, "")}`) ||
+                  "My-CV";
+
+                exportPDF(previewRef, resultname);
+              }}
               style={{
                 marginTop: 16,
                 float: "right",
