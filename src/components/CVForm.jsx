@@ -3,6 +3,7 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -25,6 +26,20 @@ import Cropper from "react-easy-crop";
 import useWindowSize from "../hooks/useWindowSize";
 import { editorConfiguration } from "../libs/packages/ckeditor";
 import { getCroppedImg } from "../utils/cropImage";
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const { TextArea } = Input;
 
@@ -431,6 +446,104 @@ export default function CVForm({ data = {}, onChange }) {
 }
 
 /* === REUSABLE SECTION COMPONENT === */
+function SortableItem({ id, item, activeKey, setActiveKey }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    marginBottom: 8,
+    opacity: isDragging ? 0.7 : 1,
+  };
+
+  const labelWithHandle = {
+    ...item,
+    label: (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          gap: 8,
+        }}
+      >
+        <span
+          style={{ fontWeight: 500, fontSize: 15, flex: 1, textAlign: "left" }}
+        >
+          {item.label}
+        </span>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <MinusCircleOutlined
+            title="Hapus"
+            style={{
+              color: "red",
+              fontSize: 16,
+              cursor: "pointer",
+              padding: "3px",
+              borderRadius: "50%",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              const removeFn = item?.removeFn;
+              if (removeFn) removeFn();
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255, 0, 0, 0.1)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          />
+          <span
+            {...listeners}
+            {...attributes}
+            style={{
+              cursor: "grab",
+              color: "#888",
+              userSelect: "none",
+              fontSize: 16,
+              display: "flex",
+              alignItems: "center",
+              paddingRight: 4,
+              padding: "3px",
+              borderRadius: "2px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(0, 0, 0, 0.06)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            <MenuOutlined title="Geser" />
+          </span>
+        </div>
+      </div>
+    ),
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Collapse
+        accordion
+        activeKey={activeKey}
+        onChange={(key) => setActiveKey(key)}
+        items={[labelWithHandle]}
+      />
+    </div>
+  );
+}
+
 function SectionCollapse({
   title,
   tipsTitle,
@@ -447,8 +560,38 @@ function SectionCollapse({
   const { isMobile } = useWindowSize();
   const [activeKey, setActiveKey] = useState(null);
   const [showTips, setShowTips] = useState(false);
+  const [orderedFields, setOrderedFields] = useState(fields);
 
   const toggleTips = (value = true) => setShowTips(value);
+
+  useEffect(() => setOrderedFields(fields), [fields]);
+
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const onDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = orderedFields.findIndex((i) => i.key === active.id);
+    const newIndex = orderedFields.findIndex((i) => i.key === over.id);
+    const newOrder = arrayMove(orderedFields, oldIndex, newIndex);
+    setOrderedFields(newOrder);
+
+    const fieldName = education
+      ? "education"
+      : skills
+      ? "skills"
+      : languages
+      ? "languages"
+      : "experiences";
+
+    const currentValues = form.getFieldValue(fieldName);
+    if (Array.isArray(currentValues)) {
+      const reorderedValues = arrayMove(currentValues, oldIndex, newIndex);
+      form.setFieldValue(fieldName, reorderedValues);
+      handleChange();
+    }
+  };
 
   const formatPeriod = (period) => {
     if (!period || !Array.isArray(period) || period.length !== 2) return "";
@@ -463,7 +606,8 @@ function SectionCollapse({
     return `${format(start)} - ${format(end)}`;
   };
 
-  const items = fields.map(({ key, name, ...restField }) => {
+  // === Generate items ===
+  const items = orderedFields.map(({ key, name, ...restField }) => {
     const fieldValues = form.getFieldValue(
       education
         ? ["education", name]
@@ -497,25 +641,11 @@ function SectionCollapse({
 
     return {
       key,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span>{headerText || `Item #${key + 1}`}</span>
-          <MinusCircleOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              remove(name);
-              if (activeKey === key) setActiveKey(null);
-            }}
-            style={{ color: "red" }}
-          />
-        </div>
-      ),
+      label: headerText || `Item #${key + 1}`,
+      removeFn: () => {
+        remove(name);
+        if (activeKey === key) setActiveKey(null);
+      },
       children: (
         <Space
           direction="vertical"
@@ -527,7 +657,6 @@ function SectionCollapse({
             border: "1px solid #eee",
           }}
         >
-          {/* SKILL */}
           {skills ? (
             <Form.Item {...restField} name={[name, "skill"]}>
               <Input placeholder="Contoh: React.js, Node.js, UI Design" />
@@ -544,7 +673,6 @@ function SectionCollapse({
               <Form.Item {...restField} label="Jurusan" name={[name, "major"]}>
                 <Input placeholder="Contoh: Informatika" />
               </Form.Item>
-
               <label>Periode</label>
               <Row gutter={12} align="top" style={{ marginBottom: "24px" }}>
                 <Col xs={24} sm={11}>
@@ -569,11 +697,11 @@ function SectionCollapse({
                 </Col>
                 <Col xs={24} sm={11}>
                   <Form.Item
+                    noStyle
                     shouldUpdate={(prev, next) =>
                       prev?.education?.[name]?.untilNow !==
                       next?.education?.[name]?.untilNow
                     }
-                    noStyle
                   >
                     {({ getFieldValue }) => {
                       const untilNow = getFieldValue([
@@ -597,7 +725,6 @@ function SectionCollapse({
                       );
                     }}
                   </Form.Item>
-
                   <Form.Item
                     {...restField}
                     name={[name, "untilNow"]}
@@ -608,7 +735,6 @@ function SectionCollapse({
                   </Form.Item>
                 </Col>
               </Row>
-
               <Form.Item
                 {...restField}
                 label="Deskripsi"
@@ -649,7 +775,6 @@ function SectionCollapse({
               </Form.Item>
             </>
           ) : (
-            // EXPERIENCES
             <>
               <Form.Item
                 {...restField}
@@ -665,7 +790,6 @@ function SectionCollapse({
               >
                 <Input placeholder="Nama perusahaan" />
               </Form.Item>
-
               <label>Periode</label>
               <Row gutter={12} align="top" style={{ marginBottom: "24px" }}>
                 <Col xs={24} sm={11}>
@@ -690,11 +814,11 @@ function SectionCollapse({
                 </Col>
                 <Col xs={24} sm={11}>
                   <Form.Item
+                    noStyle
                     shouldUpdate={(prev, next) =>
                       prev?.education?.[name]?.untilNow !==
                       next?.education?.[name]?.untilNow
                     }
-                    noStyle
                   >
                     {({ getFieldValue }) => {
                       const untilNow = getFieldValue([
@@ -728,7 +852,6 @@ function SectionCollapse({
                   </Form.Item>
                 </Col>
               </Row>
-
               <Form.Item
                 {...restField}
                 label="Deskripsi"
@@ -758,6 +881,7 @@ function SectionCollapse({
     };
   });
 
+  // === Render ===
   return (
     <div
       style={{
@@ -781,12 +905,27 @@ function SectionCollapse({
         {title}
       </label>
 
-      <Collapse
-        accordion
-        activeKey={activeKey}
-        onChange={(key) => setActiveKey(key)}
-        items={items}
-      />
+      {/* === DnD Wrapper === */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={onDragEnd}
+      >
+        <SortableContext
+          items={orderedFields.map((f) => f.key)}
+          strategy={verticalListSortingStrategy}
+        >
+          {orderedFields.map((f) => (
+            <SortableItem
+              key={f.key}
+              id={f.key}
+              item={items.find((i) => i.key === f.key)}
+              activeKey={activeKey}
+              setActiveKey={setActiveKey}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
 
       <Form.Item style={{ marginTop: 12 }}>
         <Button
