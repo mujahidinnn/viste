@@ -84,6 +84,29 @@ export default function CVForm({ data = {}, onChange }) {
       onValuesChange={handleChange}
       style={{ width: "100%" }}
     >
+      {/* ====== CONFIG ====== */}
+      <div
+        style={{
+          marginBottom: 24,
+          background: "#fafafa",
+          padding: 16,
+          borderRadius: 8,
+        }}
+      >
+        <strong>Pengaturan</strong>
+        <Form.Item
+          name="useHeader"
+          valuePropName="checked"
+          style={{ margin: 0 }}
+        >
+          <Checkbox defaultChecked={true}>
+            Gunakan Header pada CV (Foto, Nama, Posisi/Jabatan)
+          </Checkbox>
+        </Form.Item>
+        <Form.Item name="useIcon" valuePropName="checked" style={{ margin: 0 }}>
+          <Checkbox defaultChecked={true}>Gunakan ikon pada CV</Checkbox>
+        </Form.Item>
+      </div>
       {/* ====== FOTO & IDENTITAS ====== */}
       <div
         style={{
@@ -235,14 +258,6 @@ export default function CVForm({ data = {}, onChange }) {
             Hapus Foto
           </Button>
         )}
-
-        <Form.Item
-          name="useIcon"
-          valuePropName="checked"
-          style={{ marginTop: 16 }}
-        >
-          <Checkbox defaultChecked={true}>Gunakan ikon pada CV</Checkbox>
-        </Form.Item>
       </div>
 
       {/* ====== INFORMASI DASAR ====== */}

@@ -22,6 +22,8 @@ export default function CVPreview3({ data }) {
     languages = [],
     avatarUrl,
     rounded = 50,
+    useIcon = true,
+    useHeader = true,
   } = data || {};
 
   return (
@@ -34,64 +36,72 @@ export default function CVPreview3({ data }) {
         margin: "0 auto",
       }}
     >
-      {/* ===== HEADER ===== */}
-      <div
-        style={{
-          background: "#f0f0f0",
-          width: "100%",
-          height: 70,
-        }}
-      ></div>
-
-      <div
-        style={{
-          padding: "0 24px 24px 24px",
-        }}
-      >
+      {/* ===== BACKGROUND HEADER ===== */}
+      {useHeader && (
         <div
           style={{
-            display: "flex",
-            marginTop: -55,
-            alignItems: "flex-end",
+            background: "#f0f0f0",
+            width: "100%",
+            height: 70,
           }}
-        >
-          <img
-            src={avatarUrl || "https://placehold.co/100x100"}
-            alt="avatar"
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: `${rounded}%`,
-              objectFit: "cover",
-              marginRight: 24,
-              border: "3px solid white",
-            }}
-          />
+        />
+      )}
 
-          <div>
-            <h1
+      <div
+        style={{
+          padding: 24,
+        }}
+      >
+        {/* HEADER */}
+
+        {useHeader && (
+          <div
+            style={{
+              display: "flex",
+              marginTop: -80,
+              alignItems: "flex-end",
+            }}
+          >
+            <img
+              src={avatarUrl || "https://placehold.co/100x100"}
+              alt="avatar"
               style={{
-                margin: 0,
-                fontSize: 22,
-                fontWeight: "700",
-                color: "#333",
+                width: 100,
+                height: 100,
+                borderRadius: `${rounded}%`,
+                objectFit: "cover",
+                marginRight: 24,
+                border: "3px solid white",
               }}
-            >
-              {name || "Nama Lengkap"}
-            </h1>
-            {position && (
-              <h4
+            />
+
+            <div>
+              <h1
                 style={{
-                  fontSize: 16,
-                  fontWeight: 500,
-                  color: "#444",
+                  margin: 0,
+                  fontSize: 22,
+                  fontWeight: "700",
+                  color: "#333",
                 }}
               >
-                {position}
-              </h4>
-            )}
+                {name || "Nama Lengkap"}
+              </h1>
+              {position ? (
+                <h4
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    color: "#444",
+                  }}
+                >
+                  {position}
+                </h4>
+              ) : (
+                <div style={{ minHeight: "36px" }} />
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         <div
           style={{
@@ -103,7 +113,10 @@ export default function CVPreview3({ data }) {
         >
           {/* ===== PRIBADI ===== */}
           <div style={{ width: "30%" }}>
-            <SectionHeading title="DATA PRIBADI" icon={<UserOutlined />} />
+            <SectionHeading
+              title="DATA PRIBADI"
+              icon={useIcon ? <UserOutlined /> : null}
+            />
             <div style={{ marginBottom: 24 }}>
               <InfoRow label="Nama" value={name || "Nama Lengkap"} />
               <InfoRow
@@ -119,7 +132,7 @@ export default function CVPreview3({ data }) {
               <>
                 <SectionHeading
                   title="RINGKASAN PROFIL"
-                  icon={<EditOutlined />}
+                  icon={useIcon ? <EditOutlined /> : null}
                 />
                 <div
                   style={{
@@ -155,7 +168,7 @@ export default function CVPreview3({ data }) {
               <>
                 <SectionHeading
                   title="PENGALAMAN KERJA"
-                  icon={<ShoppingOutlined />}
+                  icon={useIcon ? <ShoppingOutlined /> : null}
                 />
                 {experiences.map((exp, i) => {
                   const e = exp || {};
@@ -196,7 +209,10 @@ export default function CVPreview3({ data }) {
             {/* ===== EDUCATION ===== */}
             {education.length > 0 && (
               <>
-                <SectionHeading title="PENDIDIKAN" icon={<ReadOutlined />} />
+                <SectionHeading
+                  title="PENDIDIKAN"
+                  icon={useIcon ? <ReadOutlined /> : null}
+                />
                 {education.map((edu, i) => {
                   const e = edu || {};
                   return (
@@ -224,7 +240,10 @@ export default function CVPreview3({ data }) {
             {/* ===== SKILLS ===== */}
             {skills.length > 0 && (
               <>
-                <SectionHeading title="KETERAMPILAN" icon={<StarOutlined />} />
+                <SectionHeading
+                  title="KETERAMPILAN"
+                  icon={useIcon ? <StarOutlined /> : null}
+                />
                 <ul style={{ marginTop: 8 }}>
                   {skills.map((s, i) => (
                     <li key={i}>{s?.skill}</li>
@@ -235,7 +254,10 @@ export default function CVPreview3({ data }) {
             {/* ===== LANGUAGES ===== */}
             {languages.length > 0 && (
               <>
-                <SectionHeading title="BAHASA" icon={<GlobalOutlined />} />
+                <SectionHeading
+                  title="BAHASA"
+                  icon={useIcon ? <GlobalOutlined /> : null}
+                />
                 <ul style={{ marginTop: 8 }}>
                   {languages.map((lang, i) => (
                     <li key={i}>

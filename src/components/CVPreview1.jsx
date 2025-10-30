@@ -22,6 +22,7 @@ export default function CVPreview1({ data }) {
     avatarUrl,
     rounded = 50,
     useIcon = true,
+    useHeader = true,
   } = data || {};
 
   return (
@@ -35,30 +36,36 @@ export default function CVPreview1({ data }) {
       }}
     >
       {/* ===== HEADER ===== */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
-        <div>
-          <img
-            src={avatarUrl || "https://placehold.co/80"}
-            alt="avatar"
-            style={{
-              width: 80,
-              height: 80,
-              minHeight: 80,
-              minWidth: 80,
-              borderRadius: `${rounded}%`,
-              objectFit: "cover",
-              border: "2px solid #ddd",
-              marginRight: 16,
-            }}
-          />
+      {useHeader && (
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 24 }}
+        >
+          <div>
+            <img
+              src={avatarUrl || "https://placehold.co/80"}
+              alt="avatar"
+              style={{
+                width: 80,
+                height: 80,
+                minHeight: 80,
+                minWidth: 80,
+                borderRadius: `${rounded}%`,
+                objectFit: "cover",
+                border: "2px solid #ddd",
+                marginRight: 16,
+              }}
+            />
+          </div>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 22 }}>
+              {name || "Nama Lengkap"}
+            </h1>
+            <h3 style={{ margin: "4px 0", fontWeight: 400, color: "#555" }}>
+              {position}
+            </h3>
+          </div>
         </div>
-        <div>
-          <h1 style={{ margin: 0, fontSize: 22 }}>{name || "Nama Lengkap"}</h1>
-          <h3 style={{ margin: "4px 0", fontWeight: 400, color: "#555" }}>
-            {position}
-          </h3>
-        </div>
-      </div>
+      )}
 
       {/* ===== PERSONAL INFO ===== */}
       <SectionTitle

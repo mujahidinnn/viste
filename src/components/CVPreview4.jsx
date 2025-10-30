@@ -23,6 +23,7 @@ export default function CVPreview4({ data }) {
     avatarUrl,
     rounded = 50,
     useIcon = true,
+    useHeader = true,
   } = data || {};
 
   return (
@@ -36,53 +37,54 @@ export default function CVPreview4({ data }) {
       }}
     >
       {/* ===== HEADER ===== */}
-      <div
-        style={{
-          background: "#f0f0f0",
-          display: "flex",
-          alignItems: "center",
-          padding: "24px 24px",
-          borderBottom: "3px solid #dfdfdf",
-        }}
-      >
-        <img
-          src={avatarUrl || "https://placehold.co/100x100"}
-          alt="avatar"
+      {useHeader && (
+        <div
           style={{
-            width: 100,
-            height: 100,
-            borderRadius: `${rounded}%`,
-            objectFit: "cover",
-            marginRight: 24,
-            border: "3px solid #fff",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            background: "#f0f0f0",
+            display: "flex",
+            alignItems: "center",
+            padding: "24px 24px",
+            borderBottom: "3px solid #dfdfdf",
           }}
-        />
-
-        <div>
-          <h1
+        >
+          <img
+            src={avatarUrl || "https://placehold.co/100x100"}
+            alt="avatar"
             style={{
-              margin: 0,
-              fontSize: 26,
-              fontWeight: 700,
-              color: "#1a2b4c",
+              width: 100,
+              height: 100,
+              borderRadius: `${rounded}%`,
+              objectFit: "cover",
+              marginRight: 24,
+              border: "3px solid #fff",
             }}
-          >
-            {name || "Nama Lengkap"}
-          </h1>
-          {position && (
-            <h3
+          />
+
+          <div>
+            <h1
               style={{
-                margin: "4px 0 0 0",
-                fontWeight: 500,
-                color: "#444",
+                margin: 0,
+                fontSize: 26,
+                fontWeight: 700,
+                color: "#1a2b4c",
               }}
             >
-              {position}
-            </h3>
-          )}
+              {name || "Nama Lengkap"}
+            </h1>
+            {position && (
+              <h3
+                style={{
+                  margin: "4px 0 0 0",
+                  fontWeight: 500,
+                  color: "#444",
+                }}
+              >
+                {position}
+              </h3>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ===== BODY ===== */}
       <div

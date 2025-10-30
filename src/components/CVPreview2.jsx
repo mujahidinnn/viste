@@ -23,6 +23,7 @@ export default function CVPreview2({ data }) {
     avatarUrl,
     rounded = 50,
     useIcon = true,
+    useHeader = true,
   } = data || {};
 
   return (
@@ -37,44 +38,48 @@ export default function CVPreview2({ data }) {
       }}
     >
       {/* ===== HEADER ===== */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
-        <img
-          src={avatarUrl || "https://placehold.co/100x100"}
-          alt="avatar"
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: `${rounded}%`,
-            objectFit: "cover",
-            marginRight: 24,
-          }}
-        />
-        <div>
-          <h1
+      {useHeader && (
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 24 }}
+        >
+          <img
+            src={avatarUrl || "https://placehold.co/100x100"}
+            alt="avatar"
             style={{
-              margin: 0,
-              fontSize: 26,
-              fontWeight: "700",
-              color: "#333",
+              width: 100,
+              height: 100,
+              borderRadius: `${rounded}%`,
+              objectFit: "cover",
+              marginRight: 24,
             }}
-          >
-            {name || "Nama Lengkap"}
-          </h1>
-
-          {position && (
-            <h2
+          />
+          <div>
+            <h1
               style={{
-                margin: "6px 0 0 0",
-                fontSize: 18,
-                fontWeight: 500,
-                color: "#444",
+                margin: 0,
+                fontSize: 26,
+                fontWeight: "700",
+                color: "#333",
               }}
             >
-              {position}
-            </h2>
-          )}
+              {name || "Nama Lengkap"}
+            </h1>
+
+            {position && (
+              <h2
+                style={{
+                  margin: "6px 0 0 0",
+                  fontSize: 18,
+                  fontWeight: 500,
+                  color: "#444",
+                }}
+              >
+                {position}
+              </h2>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ===== PERSONAL INFO ===== */}
       <SectionHeading
