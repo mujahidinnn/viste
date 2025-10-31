@@ -1,12 +1,27 @@
 import {
   BulbOutlined,
+  MenuOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
-  MenuOutlined,
 } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   Avatar,
   Button,
@@ -26,20 +41,6 @@ import Cropper from "react-easy-crop";
 import useWindowSize from "../hooks/useWindowSize";
 import { editorConfiguration } from "../libs/packages/ckeditor";
 import { getCroppedImg } from "../utils/cropImage";
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  closestCenter,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 const { TextArea } = Input;
 
@@ -476,6 +477,13 @@ function SortableItem({ id, item, activeKey, setActiveKey }) {
     transition,
     marginBottom: 8,
     opacity: isDragging ? 0.7 : 1,
+    touchAction: "none",
+    WebkitTouchCallout: "none",
+    WebkitUserSelect: "none",
+    WebkitUserDrag: "none",
+    userSelect: "none",
+    msTouchAction: "none",
+    overscrollBehavior: "contain",
   };
 
   const labelWithHandle = {
@@ -581,7 +589,19 @@ function SectionCollapse({
 
   useEffect(() => setOrderedFields(fields), [fields]);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      },
+    })
+  );
 
   const onDragEnd = (event) => {
     const { active, over } = event;
@@ -906,6 +926,7 @@ function SectionCollapse({
         padding: 20,
         marginBottom: 24,
         boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+        touchAction: "manipulation",
       }}
     >
       <label
