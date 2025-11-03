@@ -13,16 +13,93 @@ import { exportPDF } from "./utils/pdf";
 const { Title } = Typography;
 const { Content } = Layout;
 
+const colorThemes = [
+  // 1. Neutral Gray
+  {
+    text1: "#222222",
+    text2: "#555555",
+    text3: "#777777",
+    bg: "#F0F0F0",
+  },
+  // 2. Dark Gray
+  // {
+  // text1: "#FFFFFF",
+  // text2: "#DDDDDD",
+  // text3: "#AAAAAA",
+  // bg: "#333333",
+  // },
+  // 3. Green
+  {
+    text1: "#0E7131",
+    text2: "#1F8A45",
+    text3: "#A4D9A0",
+    bg: "#DFF3E3",
+  },
+  // 4. Emerald
+  {
+    text1: "#006A4E",
+    text2: "#008C6F",
+    text3: "#B2E3D3",
+    bg: "#E8FAF4",
+  },
+  // 5. Yellow / Gold
+  {
+    text1: "#5C4500",
+    text2: "#826923",
+    text3: "#E6C76C",
+    bg: "#FFF8E1",
+  },
+  // 6. Blue
+  {
+    text1: "#1F2C73",
+    text2: "#435C94",
+    text3: "#A9B9E8",
+    bg: "#E8EEFF",
+  },
+  // 7. Cyan / Teal
+  {
+    text1: "#005A66",
+    text2: "#0096AA",
+    text3: "#A7E7EE",
+    bg: "#E6FAFC",
+  },
+  // 8. Red
+  {
+    text1: "#6A0000",
+    text2: "#8C1E2F",
+    text3: "#F19BA3",
+    bg: "#FDECEC",
+  },
+  // 9. Purple / Violet
+  {
+    text1: "#3E2A5A",
+    text2: "#544C78",
+    text3: "#C0B5E6",
+    bg: "#F5F0FF",
+  },
+  // 10. Magenta / Pink
+  {
+    text1: "#82175E",
+    text2: "#A23A84",
+    text3: "#F6B7E0",
+    bg: "#FFF0FA",
+  },
+];
+
 export default function App() {
   const [fileName, setFileName] = useState("");
   const [data, setData] = useState({});
   const [selectedTemplate, setSelectedTemplate] = useState("cv1");
+  const [selectedTheme, setSelectedTheme] = useState(colorThemes[0]);
   const previewRef = useRef();
 
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem("visteedata");
-      if (saved) setData(JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setData(parsed);
+      }
     } catch (err) {
       console.warn("Gagal parse data CV:", err);
     }
@@ -38,6 +115,10 @@ export default function App() {
     }, 3000);
     return () => clearTimeout(timeout);
   }, [data]);
+
+  useEffect(() => {
+    setData((prev) => ({ ...prev, colorTheme: selectedTheme }));
+  }, [selectedTheme]);
 
   const renderSelectedTemplate = () => {
     switch (selectedTemplate) {
@@ -160,6 +241,38 @@ export default function App() {
               </Col>
             </Row>
 
+            {/* Color Theme Picker */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8,
+                marginBottom: 24,
+              }}
+            >
+              {colorThemes.map((theme, i) => {
+                const isActive = selectedTheme.bg === theme.bg;
+                return (
+                  <div
+                    key={i}
+                    onClick={() => setSelectedTheme(theme)}
+                    title={theme.name}
+                    style={{
+                      cursor: "pointer",
+                      border: isActive ? "3px solid #1890ff" : "1px solid #ddd",
+                      borderRadius: "50%",
+                      width: 28,
+                      height: 28,
+                      background: theme.bg,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  ></div>
+                );
+              })}
+            </div>
+
             <Row gutter={24}>
               <Col>
                 <Title level={4} style={{ marginTop: 8 }}>
@@ -186,13 +299,19 @@ export default function App() {
               </Col>
             </Row>
             <div
-              ref={previewRef}
               style={{
-                minHeight: "80vh",
-                background: "#fafafa",
+                padding: 24,
+                background: "#fff",
               }}
             >
-              {renderSelectedTemplate()}
+              <div
+                ref={previewRef}
+                style={{
+                  minHeight: "80vh",
+                }}
+              >
+                {renderSelectedTemplate()}
+              </div>
             </div>
 
             <Button

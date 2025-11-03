@@ -23,15 +23,22 @@ export default function CVPreview1({ data }) {
     rounded = 50,
     useIcon = true,
     useHeader = true,
+    colorTheme = {
+      text1: "#222222",
+      text2: "#555555",
+      text3: "#777777",
+      bg: "#F0F0F0",
+    },
   } = data || {};
+
+  const { text1, text2, text3, bg } = colorTheme || {};
 
   return (
     <div
       style={{
         fontFamily: "Arial, sans-serif",
         background: "#fff",
-        padding: 24,
-        color: "#333",
+        color: text1,
         lineHeight: 1.6,
       }}
     >
@@ -51,17 +58,17 @@ export default function CVPreview1({ data }) {
                 minWidth: 80,
                 borderRadius: `${rounded}%`,
                 objectFit: "cover",
-                border: "2px solid #ddd",
+                border: `2px solid ${bg}`,
                 marginRight: 16,
               }}
             />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: 22 }}>
+            <h1 style={{ margin: 0, fontSize: 22, color: text1 }}>
               {name || "Nama Lengkap"}
             </h1>
-            <h3 style={{ margin: "4px 0", fontWeight: 400, color: "#555" }}>
-              {position}
+            <h3 style={{ margin: "4px 0", fontWeight: 400, color: text2 }}>
+              {position || "Posisi / Jabatan"}
             </h3>
           </div>
         </div>
@@ -69,6 +76,7 @@ export default function CVPreview1({ data }) {
 
       {/* ===== PERSONAL INFO ===== */}
       <SectionTitle
+        colorTheme={bg}
         icon={useIcon ? <UserOutlined /> : null}
         title="Data Pribadi"
       />
@@ -76,7 +84,7 @@ export default function CVPreview1({ data }) {
         <InfoRow label="Nama" value={name || "Nama Lengkap"} />
         <InfoRow label="Email" value={email || "email@contoh.com"} />
         <InfoRow label="Nomor telepon" value={phone || "08xx-xxxx-xxxx"} />
-        <InfoRow label="Alamat" value={address || ""} />
+        <InfoRow label="Alamat" value={address || "-"} />
       </div>
 
       {/* ===== SUMMARY ===== */}
@@ -84,8 +92,9 @@ export default function CVPreview1({ data }) {
         <div
           style={{
             marginBottom: 24,
-            borderLeft: "4px solid #ccc",
+            borderLeft: `4px solid ${bg}`,
             paddingLeft: 12,
+            color: text2,
           }}
           dangerouslySetInnerHTML={{ __html: summary }}
         />
@@ -95,8 +104,9 @@ export default function CVPreview1({ data }) {
       {experiences.length > 0 && (
         <>
           <SectionTitle
+            colorTheme={bg}
             icon={useIcon ? <ShoppingOutlined /> : null}
-            title="Pengalaman kerja"
+            title="Pengalaman Kerja"
           />
           {experiences.map((exp, i) => {
             const e = exp || {};
@@ -117,22 +127,22 @@ export default function CVPreview1({ data }) {
                   }}
                 >
                   <div>
-                    <h3 style={{ margin: 0 }}>{e.position || "Jabatan"}</h3>
-                    <p
-                      style={{ margin: 0, color: "#555", fontStyle: "italic" }}
-                    >
+                    <h3 style={{ margin: 0, color: text1 }}>
+                      {e.position || "Jabatan"}
+                    </h3>
+                    <p style={{ margin: 0, color: text2, fontStyle: "italic" }}>
                       {e.company || "Perusahaan"}
                       {e.location ? `, ${e.location}` : ""}
                     </p>
                   </div>
-                  <span style={{ color: "#777", fontSize: 13 }}>
+                  <span style={{ color: text3, fontSize: 13 }}>
                     {formatPeriod(e)}
                   </span>
                 </div>
 
                 {e.description && (
                   <div
-                    style={{ marginTop: 8 }}
+                    style={{ marginTop: 8, color: text2 }}
                     dangerouslySetInnerHTML={{ __html: e.description }}
                   />
                 )}
@@ -146,6 +156,7 @@ export default function CVPreview1({ data }) {
       {education.length > 0 && (
         <>
           <SectionTitle
+            colorTheme={bg}
             icon={useIcon ? <ReadOutlined /> : null}
             title="Pendidikan"
           />
@@ -168,21 +179,21 @@ export default function CVPreview1({ data }) {
                   }}
                 >
                   <div>
-                    <h3 style={{ margin: 0 }}>{e.major || "Jurusan"}</h3>
-                    <p
-                      style={{ margin: 0, color: "#555", fontStyle: "italic" }}
-                    >
+                    <h3 style={{ margin: 0, color: text1 }}>
+                      {e.major || "Jurusan"}
+                    </h3>
+                    <p style={{ margin: 0, color: text2, fontStyle: "italic" }}>
                       {e.school || "Institusi"}
                     </p>
                   </div>
-                  <span style={{ color: "#777", fontSize: 13 }}>
+                  <span style={{ color: text3, fontSize: 13 }}>
                     {formatPeriod(e)}
                   </span>
                 </div>
 
                 {e.description && (
                   <div
-                    style={{ marginTop: 8 }}
+                    style={{ marginTop: 8, color: text2 }}
                     dangerouslySetInnerHTML={{ __html: e.description }}
                   />
                 )}
@@ -196,10 +207,11 @@ export default function CVPreview1({ data }) {
       {skills.length > 0 && (
         <>
           <SectionTitle
+            colorTheme={bg}
             icon={useIcon ? <StarOutlined /> : null}
             title="Keterampilan"
           />
-          <ul style={{ marginTop: 4 }}>
+          <ul style={{ marginTop: 4, color: text2 }}>
             {skills.map((s, i) => (
               <li key={i}>{s?.skill}</li>
             ))}
@@ -211,15 +223,16 @@ export default function CVPreview1({ data }) {
       {languages.length > 0 && (
         <>
           <SectionTitle
+            colorTheme={bg}
             icon={useIcon ? <GlobalOutlined /> : null}
             title="Bahasa"
           />
-          <ul style={{ marginTop: 4 }}>
+          <ul style={{ marginTop: 4, color: text2 }}>
             {languages.map((lang, i) => (
               <li key={i}>
                 {lang?.language}{" "}
                 {lang?.level ? (
-                  <span style={{ color: "#777" }}>– {lang.level}</span>
+                  <span style={{ color: text3 }}>– {lang.level}</span>
                 ) : null}
               </li>
             ))}
@@ -232,10 +245,10 @@ export default function CVPreview1({ data }) {
 
 /* ========== Helper Components ========== */
 
-const SectionTitle = ({ icon, title }) => (
+const SectionTitle = ({ icon, title, colorTheme }) => (
   <div
     style={{
-      background: "#f0f0f0",
+      background: colorTheme,
       padding: "6px 12px",
       borderRadius: 4,
       marginBottom: 12,

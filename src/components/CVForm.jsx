@@ -94,7 +94,17 @@ export default function CVForm({ data = {}, onChange }) {
           borderRadius: 8,
         }}
       >
-        <strong>Pengaturan</strong>
+        <label
+          style={{
+            fontWeight: 600,
+            fontSize: 16,
+            display: "block",
+            marginBottom: 12,
+            color: "#003366",
+          }}
+        >
+          Pengaturan
+        </label>
         <Form.Item
           name="useHeader"
           valuePropName="checked"

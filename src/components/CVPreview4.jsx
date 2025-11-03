@@ -24,14 +24,22 @@ export default function CVPreview4({ data }) {
     rounded = 50,
     useIcon = true,
     useHeader = true,
+    colorTheme = {
+      text1: "#222222",
+      text2: "#555555",
+      text3: "#777777",
+      bg: "#F0F0F0",
+    },
   } = data || {};
+
+  const { text1, text2, text3, bg } = colorTheme || {};
 
   return (
     <div
       style={{
         fontFamily: "'Inter', Arial, sans-serif",
         background: "#ffffff",
-        color: "#1a1a1a",
+        color: text1,
         lineHeight: 1.6,
         overflow: "hidden",
       }}
@@ -40,11 +48,11 @@ export default function CVPreview4({ data }) {
       {useHeader && (
         <div
           style={{
-            background: "#f0f0f0",
+            background: bg,
             display: "flex",
             alignItems: "center",
             padding: "24px 24px",
-            borderBottom: "3px solid #dfdfdf",
+            borderBottom: `2px solid ${text3}`,
           }}
         >
           <img
@@ -56,7 +64,7 @@ export default function CVPreview4({ data }) {
               borderRadius: `${rounded}%`,
               objectFit: "cover",
               marginRight: 24,
-              border: "3px solid #fff",
+              border: `3px solid #fff`,
             }}
           />
 
@@ -66,7 +74,7 @@ export default function CVPreview4({ data }) {
                 margin: 0,
                 fontSize: 26,
                 fontWeight: 700,
-                color: "#1a2b4c",
+                color: text1,
               }}
             >
               {name || "Nama Lengkap"}
@@ -76,7 +84,7 @@ export default function CVPreview4({ data }) {
                 style={{
                   margin: "4px 0 0 0",
                   fontWeight: 500,
-                  color: "#444",
+                  color: text2,
                 }}
               >
                 {position}
@@ -87,32 +95,42 @@ export default function CVPreview4({ data }) {
       )}
 
       {/* ===== BODY ===== */}
-      <div
-        style={{
-          padding: 24,
-        }}
-      >
+      <div style={{ padding: "24px 0 24px 0" }}>
         <SectionHeading
           title="Data Pribadi"
           icon={useIcon ? <UserOutlined /> : null}
+          colorTheme={bg}
+          textColor={text1}
+          borderColor={text3}
         />
-        <InfoRow label="Nama" value={name || "Nama Lengkap"} />
-        <InfoRow label="Telepon" value={phone || "08xx-xxxx-xxxx"} />
-        <InfoRow label="Email" value={email || "email@contoh.com"} />
-        <InfoRow label="Alamat" value={address || "-"} />
+        <InfoRow label="Nama" value={name || "Nama Lengkap"} color={text2} />
+        <InfoRow
+          label="Telepon"
+          value={phone || "08xx-xxxx-xxxx"}
+          color={text2}
+        />
+        <InfoRow
+          label="Email"
+          value={email || "email@contoh.com"}
+          color={text2}
+        />
+        <InfoRow label="Alamat" value={address || "-"} color={text2} />
 
         {summary && (
           <>
             <SectionHeading
               title="Ringkasan Profil"
               icon={useIcon ? <EditOutlined /> : null}
+              colorTheme={bg}
+              textColor={text1}
+              borderColor={text3}
             />
             <div
               style={{
                 textAlign: "justify",
-                color: "#444",
+                color: text2,
                 fontSize: 14,
-                borderLeft: "4px solid #ccc",
+                borderLeft: `4px solid ${bg}`,
                 paddingLeft: 12,
                 marginBottom: 24,
               }}
@@ -126,8 +144,11 @@ export default function CVPreview4({ data }) {
             <SectionHeading
               title="Keterampilan"
               icon={useIcon ? <StarOutlined /> : null}
+              colorTheme={bg}
+              textColor={text1}
+              borderColor={text3}
             />
-            <ul style={{ marginTop: 8 }}>
+            <ul style={{ marginTop: 8, color: text2 }}>
               {skills.map((s, i) => (
                 <li key={i}>{s?.skill}</li>
               ))}
@@ -140,13 +161,16 @@ export default function CVPreview4({ data }) {
             <SectionHeading
               title="Bahasa"
               icon={useIcon ? <GlobalOutlined /> : null}
+              colorTheme={bg}
+              textColor={text1}
+              borderColor={text3}
             />
-            <ul style={{ marginTop: 8 }}>
+            <ul style={{ marginTop: 8, color: text2 }}>
               {languages.map((lang, i) => (
                 <li key={i}>
                   {lang?.language}{" "}
                   {lang?.level ? (
-                    <span style={{ color: "#777" }}>– {lang.level}</span>
+                    <span style={{ color: text3 }}>– {lang.level}</span>
                   ) : null}
                 </li>
               ))}
@@ -159,6 +183,9 @@ export default function CVPreview4({ data }) {
             <SectionHeading
               title="Pengalaman Kerja"
               icon={useIcon ? <ShoppingOutlined /> : null}
+              colorTheme={bg}
+              textColor={text1}
+              borderColor={text3}
             />
             {experiences.map((exp, i) => {
               const e = exp || {};
@@ -169,13 +196,16 @@ export default function CVPreview4({ data }) {
                     marginBottom: 20,
                     borderBottom: "1px solid #eee",
                     paddingBottom: 10,
+                    color: text2,
                   }}
                 >
-                  <strong>{e.position || "Jabatan"}</strong>
-                  <div style={{ fontStyle: "italic", color: "#555" }}>
+                  <strong style={{ color: text1 }}>
+                    {e.position || "Jabatan"}
+                  </strong>
+                  <div style={{ fontStyle: "italic", color: text2 }}>
                     {e.company || "Perusahaan"}
                   </div>
-                  <div style={{ color: "#777", fontSize: 13 }}>
+                  <div style={{ color: text3, fontSize: 13 }}>
                     {formatPeriod(e)}
                   </div>
                   {e.description && (
@@ -197,6 +227,9 @@ export default function CVPreview4({ data }) {
             <SectionHeading
               title="Pendidikan"
               icon={useIcon ? <ReadOutlined /> : null}
+              colorTheme={bg}
+              textColor={text1}
+              borderColor={text3}
             />
             {education.map((edu, i) => {
               const e = edu || {};
@@ -207,13 +240,16 @@ export default function CVPreview4({ data }) {
                     marginBottom: 20,
                     borderBottom: "1px solid #eee",
                     paddingBottom: 10,
+                    color: text2,
                   }}
                 >
-                  <strong>{e.major || "Jurusan"}</strong>
-                  <div style={{ fontStyle: "italic", color: "#555" }}>
+                  <strong style={{ color: text1 }}>
+                    {e.major || "Jurusan"}
+                  </strong>
+                  <div style={{ fontStyle: "italic", color: text2 }}>
                     {e.school || "Institusi"}
                   </div>
-                  <div style={{ color: "#777", fontSize: 13 }}>
+                  <div style={{ color: text3, fontSize: 13 }}>
                     {formatPeriod(e)}
                   </div>
                   {e.description && (
@@ -235,7 +271,7 @@ export default function CVPreview4({ data }) {
 }
 
 /* ===== Sub Components ===== */
-function SectionHeading({ title, icon }) {
+function SectionHeading({ title, icon, colorTheme, textColor, borderColor }) {
   return (
     <div
       style={{
@@ -244,11 +280,14 @@ function SectionHeading({ title, icon }) {
         gap: 8,
         fontWeight: 600,
         fontSize: 16,
-        color: "#222",
-        borderBottom: "2px solid #ccc",
+        color: textColor,
+        borderBottom: `2px solid ${borderColor}`,
         paddingBottom: 4,
         marginBottom: 12,
         textTransform: "uppercase",
+        background: colorTheme,
+        borderRadius: 4,
+        padding: "6px 12px",
       }}
     >
       {icon}
@@ -257,13 +296,13 @@ function SectionHeading({ title, icon }) {
   );
 }
 
-const InfoRow = ({ label, value }) => (
-  <table style={{ margin: "4px 0", fontSize: "14px" }}>
+const InfoRow = ({ label, value, color }) => (
+  <table style={{ margin: "4px 0", fontSize: "14px", color }}>
     <tbody>
       <tr style={{ verticalAlign: "top" }}>
         <td style={{ width: 120 }}>{label}</td>
         <td style={{ width: 10 }}> : </td>
-        <td> {value || "-"}</td>
+        <td>{value || "-"}</td>
       </tr>
     </tbody>
   </table>
